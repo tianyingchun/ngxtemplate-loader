@@ -3,9 +3,36 @@ var path = require('path');
 var jsesc = require('jsesc');
 var minify = require('html-minifier').minify;
 
+var queryCallbackParameters = {
+  ngModuleFn: function (query, filePath, resource, prefix, relativeTo) {
+    var projectName = query.projectName;
+    var subProjectName = query.subProjectName;
+    if (projectName && subProjectName) {
+      return [projectName, subProjectName].join('_');
+    } else if (projectName) {
+      var assumedSubProjectName = filePath.replace(projectName);
+      var folders = filePath.split(path.sep).filter(function (e) {
+        return !!e;
+      });
+      if (projectName == folders[0]) {
+        return [projectName, folders[1]].join('_');
+      } else {
+        return [folders[0], folders[1]].join('_');
+      }
+    } else {
+      return query.module || 'ng';
+    }
+  }
+};
+
+function noop() {
+
+}
 module.exports = function (content) {
   this.cacheable && this.cacheable();
   var query = loaderUtils.parseQuery(this.query);
+  var ngModuleFn = queryCallbackParameters[query.moduleFn] || noop;
+
   var ngModule = query.module || 'ng'; // ng is the global angular module that does not need to explicitly required
   var relativeTo = query.relativeTo || '';
   var htmlminOptions = query.htmlmin || {
@@ -46,6 +73,10 @@ module.exports = function (content) {
 
   var filePath = prefix + resource.slice(relativeToIndex + relativeTo.length); // get the base path
   var html;
+
+  ngModule = ngModuleFn(query, filePath, resource, prefix, relativeTo) || ngModule;
+
+  console.log(' ngModule: ', ngModule, ' templateUrl: ', filePath);
 
   if (content.match(/^module\.exports/)) {
     var firstQuote = findQuote(content, false);
