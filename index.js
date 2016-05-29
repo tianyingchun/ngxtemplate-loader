@@ -7,7 +7,7 @@ var queryCallbackParameters = {
   ngModuleFn: function (query, filePath, resource, prefix, relativeTo) {
     var projectName = query.projectName;
     var subProjectName = query.subProjectName;
-    var prefix = query.prefix;
+    var prefix = query.prefix || '';
 
     if (projectName && subProjectName) {
       return [projectName, subProjectName].join('_');
