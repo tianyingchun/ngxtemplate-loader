@@ -7,13 +7,18 @@ var queryCallbackParameters = {
   ngModuleFn: function (query, filePath, resource, prefix, relativeTo) {
     var projectName = query.projectName;
     var subProjectName = query.subProjectName;
+    var prefix = query.prefix;
+
     if (projectName && subProjectName) {
       return [projectName, subProjectName].join('_');
     } else if (projectName) {
-      var assumedSubProjectName = filePath.replace(projectName);
+
+      filePath = filePath.replace(prefix, "");
+
       var folders = filePath.split(path.sep).filter(function (e) {
         return !!e;
       });
+
       if (projectName == folders[0]) {
         return [projectName, folders[1]].join('_');
       } else {
