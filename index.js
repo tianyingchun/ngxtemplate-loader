@@ -7,23 +7,21 @@ var queryCallbackParameters = {
   ngModuleFn: function (query, filePath, resource, prefix, relativeTo) {
     var projectName = query.projectName;
     var subProjectName = query.subProjectName;
+    var dynamicModule = query.dynamicModule || false;
     var prefix = query.prefix || '';
+
+    filePath = filePath.replace(prefix, "");
+
+    var folders = filePath.split(path.sep).filter(function (e) {
+      return !!e;
+    });
+
+    // dynamic projectName.
+    if (!projectName) projectName = folders.shift();
+    if (!subProjectName) subProjectName = folders.shift();
 
     if (projectName && subProjectName) {
       return [projectName, subProjectName].join('_');
-    } else if (projectName) {
-
-      filePath = filePath.replace(prefix, "");
-
-      var folders = filePath.split(path.sep).filter(function (e) {
-        return !!e;
-      });
-
-      if (projectName == folders[0]) {
-        return [projectName, folders[1]].join('_');
-      } else {
-        return [folders[0], folders[1]].join('_');
-      }
     } else {
       return query.module || 'ng';
     }
@@ -37,7 +35,6 @@ module.exports = function (content) {
   this.cacheable && this.cacheable();
   var query = loaderUtils.parseQuery(this.query);
   var ngModuleFn = queryCallbackParameters[query.moduleFn] || noop;
-
   var ngModule = query.module || 'ng'; // ng is the global angular module that does not need to explicitly required
   var relativeTo = query.relativeTo || '';
   var htmlminOptions = query.htmlmin || {
