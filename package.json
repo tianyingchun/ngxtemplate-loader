@@ -1,6 +1,6 @@
 {
   "name": "ngxtemplate-loader",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Include AngularJS templates in the Webpack bundle and preload the template cache.",
   "main": "index.js",
   "scripts": {
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "jsesc": "^0.5.0",
-    "loader-utils": "~0.2.6"
+    "loader-utils": "^1.1.0"
   },
   "devDependencies": {
     "baggage-loader": "^0.2.1",

@@ -33,7 +33,7 @@ function noop() {
 }
 module.exports = function (content) {
   this.cacheable && this.cacheable();
-  var query = loaderUtils.parseQuery(this.query);
+  var query = loaderUtils.getOptions(this) || {};
   var ngModuleFn = queryCallbackParameters[query.moduleFn] || noop;
   var ngModule = query.module || 'ng'; // ng is the global angular module that does not need to explicitly required
   var relativeTo = query.relativeTo || '';
